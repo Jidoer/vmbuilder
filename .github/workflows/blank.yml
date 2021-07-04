@@ -1,36 +1,59 @@
-# This is a basic workflow to help you get started with Actions
+name: Android CI
 
-name: CI
-
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    runs-on: ubuntu-18.04
+
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+    - uses: actions/checkout@v2
+    - name: set up JDK 1.8
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+        
+    
+      
+    - name: make
+      run: |
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
+            # Commands:
 
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+            sudo apt-get install ant #//If you install manually - set envirnoment value to Ant
+
+            sudo apt-get install make
+
+            sudo apt-get install g++
+
+            sudo apt-get install git-core
+
+             #Download required repos from GitHub (both repos must be downloaded in same folder):
+
+             git clone git://github.com/pelya/commandergenius androidsdl
+
+             git clone git://github.com/lubomyr/bochs
+             
+             #build 
+             cd bochs/build/android
+              ./build-all.sh  
+              ls -l
+              echo done!
+              #cd /home/runner/work/bochs
+              #zip -r vm.zip bochs/bochs/*
+    - name: Upload result for job 1
+
+      uses: actions/upload-artifact@v1
+
+      with:
+
+          name: debug.apk
+
+          path: bochs/build/android/bochs-debug.apk
+
